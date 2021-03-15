@@ -1,0 +1,76 @@
+---
+title: "Answers"
+author: "Angela Xu"
+date: "15/03/2021"
+output: html_document
+---
+
+<!-- Global setup -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tinytex)
+library(tidyverse)
+library(stringr)
+
+datadir <- "C:/Users/User/Documents/Data Analytics Course/Practice/Attempts/Week 3/Data/"
+
+```
+
+## Question 1
+
+```{r q1, echo=TRUE, message=FALSE}
+data1 <- read_csv(paste0(datadir,"fertility_two_countries.csv"))
+head(data1)
+
+data1ii <- data1 %>% pivot_longer('1960':'2015',names_to = "Year", values_to = "Rate")
+head(data1ii)
+
+data1iix <- data1 %>% pivot_longer(-country,names_to = "Year", values_to = "Rate")
+head(data1iix)
+
+data1iii <- data1 %>% 
+  pivot_longer(-country,names_to = "Year", values_to = "Rate", names_transform = list(Year = as.numeric))
+head(data1iii)
+```
+## Question 2
+
+```{r q2, echo=TRUE, message=FALSE, warning = FALSE}
+
+data2 <- read_csv(paste0(datadir,"life_expectancy_and_fertility.csv"))
+
+head(data2)
+
+data2ii <- data2 %>% pivot_longer(-country, names_to = "key", values_to = "value") %>% 
+  separate(key, c("year","stat"), extra="merge")
+
+head(data2ii)           
+
+```
+
+## Question 3
+
+```{r q3, echo=TRUE, message = FALSE, warning= FALSE}
+
+datagap <- read_csv(paste0(datadir,"gapminder.csv"))
+datagapwide <- read_csv(paste0(datadir,"gapminder_wide.csv"))
+
+head(datagap)
+head(datagapwide)
+
+datagapwide2 <- datagapwide %>% 
+  pivot_longer(c(-country, -continent),names_to = "key", values_to = "value") %>% 
+    separate(key,into = c("key","year"),"_") %>% 
+      pivot_wider(names_from = key, values_from = value)
+
+
+gapsumm <- summarise(datagap, sum(gdpPercap), sum(lifeExp), sum(pop))
+
+gapwidesumm <- summarise(datagapwide2, sum(gdpPercap), sum(lifeExp), sum(pop))
+
+gapsumm
+gapwidesumm
+
+```
+
+
